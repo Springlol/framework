@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<frame>
+    <action name="hello" class="com.zt.frame.action.HelloAction" method="hello">
+        <result name="success" type="dispatcher">/index.jsp</result>
+    </action>
+</frame>

@@ -1,5 +1,6 @@
 package com.zt.frame.entity;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -9,7 +10,7 @@ public class Action {
 	private String name;
 	private String classes;
 	private String method = "execute";
-	private Map<String,Object> result;
+	private Map<String,Object> result = new HashMap<String,Object>();
 
 	public Action() {
 	}
