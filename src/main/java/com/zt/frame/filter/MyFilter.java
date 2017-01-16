@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -68,8 +71,8 @@ public class MyFilter implements Filter{
 		Class aClass = Class.forName(classes);
 		return aClass.newInstance();
 	}
-	//将属性设置到Action属性中，没考虑类型转换
-	private void setPropertyToProxy(HttpServletRequest req,Object actionProxy) throws NoSuchFieldException, IllegalAccessException {
+	//将属性设置到Action属性中
+	private void setPropertyToProxy(HttpServletRequest req,Object actionProxy) throws NoSuchFieldException, IllegalAccessException, ParseException {
 		Map map = req.getParameterMap();
 		for(Iterator iterator = map.keySet().iterator();iterator.hasNext();){
 			Object key = iterator.next();
@@ -79,10 +82,31 @@ public class MyFilter implements Filter{
 				continue;
 			}
 			field.setAccessible(true);
-			field.set(actionProxy,req.getParameter(key.toString()));
+
+			typeConventer(req, actionProxy, key, field);
+
 			field.setAccessible(false);
 		}
 	}
+	//部分类型转换
+	private void typeConventer(HttpServletRequest req, Object actionProxy, Object key, Field field) throws IllegalAccessException, ParseException {
+		Class type = field.getType();
+		if(type == String.class ){
+			field.set(actionProxy,req.getParameter(key.toString()));
+		}else if ( type == Integer.class || type == Integer.TYPE ){
+			field.set(actionProxy,Integer.parseInt(req.getParameter(key.toString())));
+		}else if ( type == Double.class || type == Double.TYPE ){
+			field.set(actionProxy,Double.parseDouble(req.getParameter(key.toString())));
+		}else if ( type == Short.class || type == Short.TYPE){
+			field.set(actionProxy,Short.parseShort(req.getParameter(key.toString())));
+		} else if ( type == Date.class) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+			field.set(actionProxy, sdf.parse(req.getParameter(key.toString())));
+		} else {
+			field.set(actionProxy, req.getParameter(key.toString()));
+		}
+	}
+
 	//执行方法
 	private String actionExecute(Object actionProxy,String methodName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 		Class aClass = actionProxy.getClass();
