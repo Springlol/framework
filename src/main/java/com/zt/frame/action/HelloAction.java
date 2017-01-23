@@ -14,7 +14,6 @@ public class HelloAction {
 
 	public String hello(){
 		System.out.println(this.toString());
-
 		return "success";
 	}
 
@@ -22,7 +21,6 @@ public class HelloAction {
 	public void setName(String name) {
 		this.name = name;
 	}
-
 	public void setPwd(String pwd) {
 		this.pwd = pwd;
 	}
@@ -32,7 +30,6 @@ public class HelloAction {
 	public void setPrice(Double price){
 		this.price = price;
 	}
-
 	public void setDate(Date date) {
 		this.date = date;
 	}
